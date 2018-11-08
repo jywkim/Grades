@@ -5,6 +5,10 @@
       xmlns:local="clr-namespace:Grades.WPF"
       KeyDown="UserControl_KeyUp"             
       >
+
+    <!-- TODO: Exercise 2: Task 1a: Define the LoginTextBoxStyle -->
+    <!-- TODO: Exercise 2: Task 1c: Define the PasswordBoxStyle -->
+
     <Grid>
         <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
             <Grid Margin="25" x:Name="logonForm">
@@ -22,11 +26,13 @@
                 <TextBlock x:Name="txtError" Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource LabelStyle}" Foreground="Red" TextAlignment="Center" Visibility="Collapsed" />
 
                 <TextBlock Grid.Row="1" Style="{StaticResource LabelStyle}" FontSize="24" Text="Username: " />
-
+                
+                <!-- TODO: Exercise 2: Task 1b: Apply the LoginTextBoxStyle to the "username" TextBox -->
                 <TextBox x:Name="username" Grid.Row="1" Grid.Column="1" FontSize="24" />
 
                 <TextBlock Grid.Row="2" Style="{StaticResource LabelStyle}" FontSize="24" Text="Password: " />
                 
+                <!-- TODO: Exercise 2: Task 1d: Apply the PasswordBoxStyle to the "password" TextBox -->
                 <PasswordBox x:Name="password" Grid.Row="2" Grid.Column="1"  FontSize="24" />
 
                 <local:GrungeButton Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Click="Logon_Click">

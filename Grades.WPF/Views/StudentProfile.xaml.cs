@@ -331,6 +331,9 @@ namespace Grades.WPF
                     Record = student
                 };
 
+                // Display the photo for ths stdudent by using databinding
+                studentPhoto.DataContext = child;
+
                 // Find the grades for the student and display them
                 var grades = _context.GetGradesByStudent(student.UserId);
                 DisplayGrades(grades);

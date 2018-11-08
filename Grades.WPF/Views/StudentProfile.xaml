@@ -42,7 +42,12 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            
+
+            <local:StudentPhoto x:Name="studentPhoto" Grid.Row="2" Margin="30" Height="250" Width="235" >
+                <local:StudentPhoto.RenderTransform>
+                    <RotateTransform Angle="-2"/>
+                </local:StudentPhoto.RenderTransform>
+            </local:StudentPhoto>
         </Grid>
 
         <Grid Grid.Column="1" Margin="20">

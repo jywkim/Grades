@@ -24,8 +24,7 @@
                 <ItemsControl x:Name="list">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            
-            
+                            <local:StudentPhoto Margin="8" Height="150" Width="127.5" RenderTransformOrigin="0.5,0.5" Cursor="Hand" MouseLeftButtonUp="Student_Click" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

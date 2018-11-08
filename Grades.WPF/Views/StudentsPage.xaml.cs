@@ -29,12 +29,12 @@ namespace Grades.WPF
         #region Refresh
         public void Refresh()
         {
-            // Find all students for the current teacher
             ServiceUtils utils = new ServiceUtils();
 
             var students = utils.GetStudentsByTeacher(SessionContext.UserName);
 
             // Iterate through the returned set of students, construct a local student object list
+            // and then data bind this to the list item template
             List<LocalStudent> resultData = new List<LocalStudent>();
 
             foreach (Student s in students)
@@ -43,15 +43,11 @@ namespace Grades.WPF
                 {
                     Record = s
                 };
+
                 resultData.Add(student);
             }
 
-            // TODO: Exercise 1: Task 5a: Bind the list of students to the "list" ItemsControl
             list.ItemsSource = resultData;
-
-            txtClass.Text = String.Format("Class {0}", SessionContext.CurrentTeacher.Class);
-
-
             txtClass.Text = String.Format("Class {0}", SessionContext.CurrentTeacher.Class);
  
         }
@@ -62,29 +58,28 @@ namespace Grades.WPF
         #endregion
 
         #region Events
+        
 
-        // TODO: Exercise 1: Task 4b: Review the following event handler.
-        //Animate the photo as the user moves the mouse over the "delete" image
         private void RemoveStudent_MouseEnter(object sender, MouseEventArgs e)
         {
             Grid grid = (Grid)sender;
+
             grid.Opacity = 1.0;
+
             StudentPhoto photo = ((Grid)grid.Parent).Children[0] as StudentPhoto;
             photo.Opacity = 0.6;
         }
 
-        // TODO: Exercise 1: Task 4c: Review the following event handler.
-        // Animate the photo as the user moves the mouse away from the "delete" image
         private void RemoveStudent_MouseLeave(object sender, MouseEventArgs e)
         {
             Grid grid = (Grid)sender;
+
             grid.Opacity = 0.3;
+
             StudentPhoto photo = ((Grid)grid.Parent).Children[0] as StudentPhoto;
             photo.Opacity = 1.0;
         }
 
-        // TODO: Exercise 1: Task 3b: Review the following event handler.
-        // If the user clicks a photo, raise the StudentSelected event to display the details of the student
         private void Student_Click(object sender, MouseButtonEventArgs e)
         {
             if (StudentSelected != null)
@@ -109,8 +104,6 @@ namespace Grades.WPF
             Refresh();
         }
 
-        // TODO: Exercise 1: Task 4d: Review the following event handler.
-        // Remove the student from the class if the user clicks the remove icon
         private void RemoveStudent_Click(object sender, MouseButtonEventArgs e)
         {
             LocalStudent student = (sender as Grid).Tag as LocalStudent;
