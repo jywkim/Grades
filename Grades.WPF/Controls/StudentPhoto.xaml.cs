@@ -13,7 +13,7 @@ namespace Grades.WPF
         #endregion
 
         #region Storyboard
-        
+        // TODO: Exercise 3: Task 2a: Handle mouse events to trigger the storyboards that animate the photograph
 
         #endregion
     }
