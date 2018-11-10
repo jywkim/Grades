@@ -91,6 +91,7 @@ namespace Grades.WPF
 
         #region Refresh
 
+        // TODO: Exercise 1: Task 2c: Mark MainWindow.Refresh as an asynchronous method
         public void Refresh()
         {
             if (SessionContext.Role == "")
@@ -169,6 +170,7 @@ namespace Grades.WPF
 
                     case "Teacher":
                         // Get the details of the current user (which must be a teacher)
+                        // TODO: Exercise 1: Task 2d: Call GetTeacher asychronously
                         var teacher = utils.GetTeacher(SessionContext.UserName);
 
                         // Display the details for the teacher

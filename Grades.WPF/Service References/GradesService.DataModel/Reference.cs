@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 // Original file name:
-// Generation date: 23/07/2012 14:05:31
+// Generation date: 23/07/2012 16:06:32
 namespace Grades.WPF.GradesService.DataModel
 {
     
