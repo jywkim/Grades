@@ -205,6 +205,9 @@
     <Resource Include="Images\delete.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="TODO Exercise 2 Task 1a.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ServiceReferenceMetadataStorage Include="Service References\GradesService.DataModel\">
       <Type>datasvcmap</Type>
     </ServiceReferenceMetadataStorage>

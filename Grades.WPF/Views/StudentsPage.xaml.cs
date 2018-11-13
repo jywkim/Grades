@@ -24,26 +24,32 @@ namespace Grades.WPF
         #region Event Members
         public delegate void StudentSelectionHandler(object sender, StudentEventArgs e);
         public event StudentSelectionHandler StudentSelected;
+
+        // TODO: Exercise 2: Task 3a: Add the StartBusy public event
+
+        // TODO: Exercise 2: Task 3b: Add the EndBusy public event
+
         #endregion
 
         #region Refresh
-        // TODO: Exercise 1: Task 3a: Mark StudentsPage.Refresh as an asynchronous method
         public async void Refresh()
         {
+            // TODO: Exercise 2: Task 3f: Raise the StartBusy event
+            
             ServiceUtils utils = new ServiceUtils();
 
-            // TODO: Exercise 1: Task 3h: Invoke GetStudentsByTeacher asychronously and pass the OnGetStudentsByTeacherComplete callback as the second argument
             await utils.GetStudentsByTeacher(SessionContext.UserName, OnGetStudentsByTeacherComplete);
 
-            // TODO: Exercise 1: Task 3c: Relocate the remaining code in this method to create the OnGetStudentsByTeacherComplete callback (in the Callbacks region)
+            // TODO: Exercise 2: Task 3g: Raise the EndBusy event
+
         }
         #endregion
 
         #region Callbacks
-        // TODO: Exercise 1: Task 3b: Implement the OnGetStudentsByTeacherComplete callback to display the students for a teacher here
+        // Callback that displays the list of students for a teacher
         private void OnGetStudentsByTeacherComplete(IEnumerable<Student> students)
         {
-            // Iterate through the returned set of students, construct a local student object list
+            // Iterate through the set of students, construct a local student object list
             // and then data bind this to the list item template
             List<LocalStudent> resultData = new List<LocalStudent>();
 
@@ -57,15 +63,17 @@ namespace Grades.WPF
                 resultData.Add(student);
             }
 
-            // TODO: Exercise 1: Task 3d: Use a Dispatcher object to update the UI
-            this.Dispatcher.Invoke(() => {
-                list.ItemsSource = resultData;
-                txtClass.Text = String.Format("Class {0}", SessionContext.CurrentTeacher.Class);
-            });
-        }
+            this.Dispatcher.Invoke(() => { list.ItemsSource = resultData;
+                                           txtClass.Text = String.Format("Class {0}", SessionContext.CurrentTeacher.Class); });
+        }        
         #endregion
 
         #region Events
+
+        // TODO: Exercise 2: Task 3c: Implement the StartBusyEvent method to raise the StartBusy event
+
+        // TODO: Exercise 2: Task 3d: Implement the EndBusyEvent method to raise the EndBusy event
+
         private void Student_MouseEnter(object sender, MouseEventArgs e)
         {
             // Call the OnMouseEnter event handler on the specific photograph currently under the mouse pointer

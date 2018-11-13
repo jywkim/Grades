@@ -21,6 +21,11 @@ namespace Grades.WPF
         #endregion
 
         #region Events
+
+        // TODO: Exercise 2: Task 2a: Implement the StartBusy event handler
+
+        // TODO: Exercise 2: Task 2b: Implement the EndBusy event handler
+
         private void logonPage_LogonSuccess(object sender, EventArgs e)
         {
             Refresh();
@@ -90,8 +95,6 @@ namespace Grades.WPF
         #endregion
 
         #region Refresh
-
-        // TODO: Exercise 1: Task 2c: Mark MainWindow.Refresh as an asynchronous method
         public async void Refresh()
         {
             if (SessionContext.Role == "")
@@ -170,7 +173,6 @@ namespace Grades.WPF
 
                     case "Teacher":
                         // Get the details of the current user (which must be a teacher)
-                        // TODO: Exercise 1: Task 2d: Call GetTeacher asychronously
                         var teacher = await utils.GetTeacher(SessionContext.UserName);
 
                         // Display the details for the teacher
