@@ -26,22 +26,22 @@ namespace Grades.WPF
         public event StudentSelectionHandler StudentSelected;
 
         // TODO: Exercise 2: Task 3a: Add the StartBusy public event
-
+        public event EventHandler StartBusy;
         // TODO: Exercise 2: Task 3b: Add the EndBusy public event
-
+        public event EventHandler EndBusy;
         #endregion
 
         #region Refresh
         public async void Refresh()
         {
             // TODO: Exercise 2: Task 3f: Raise the StartBusy event
-            
+            StartBusyEvent();
             ServiceUtils utils = new ServiceUtils();
 
             await utils.GetStudentsByTeacher(SessionContext.UserName, OnGetStudentsByTeacherComplete);
 
             // TODO: Exercise 2: Task 3g: Raise the EndBusy event
-
+            EndBusyEvent();
         }
         #endregion
 
@@ -65,14 +65,23 @@ namespace Grades.WPF
 
             this.Dispatcher.Invoke(() => { list.ItemsSource = resultData;
                                            txtClass.Text = String.Format("Class {0}", SessionContext.CurrentTeacher.Class); });
-        }        
+        }
         #endregion
 
         #region Events
 
         // TODO: Exercise 2: Task 3c: Implement the StartBusyEvent method to raise the StartBusy event
-
+        private void StartBusyEvent()
+        {
+            if (StartBusy != null)
+                StartBusy(this, new EventArgs());
+        }
         // TODO: Exercise 2: Task 3d: Implement the EndBusyEvent method to raise the EndBusy event
+        private void EndBusyEvent()
+        {
+            if (EndBusy != null)
+                EndBusy(this, new EventArgs());
+        }
 
         private void Student_MouseEnter(object sender, MouseEventArgs e)
         {
