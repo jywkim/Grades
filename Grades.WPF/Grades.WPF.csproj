@@ -73,14 +73,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\BusyIndicator.xaml.cs">
-      <DependentUpon>BusyIndicator.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\AddGradeDialog.xaml.cs">
       <DependentUpon>AddGradeDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\AddStudentDialog.xaml.cs">
       <DependentUpon>AddStudentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BusyIndicator.xaml.cs">
+      <DependentUpon>BusyIndicator.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FlipControl.cs" />
     <Compile Include="Controls\GrungeButton.xaml.cs">
@@ -109,10 +109,6 @@
     <Compile Include="Views\StudentsPage.xaml.cs">
       <DependentUpon>StudentsPage.xaml</DependentUpon>
     </Compile>
-    <Page Include="Controls\BusyIndicator.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\AddGradeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -120,6 +116,10 @@
     <Page Include="Controls\AddStudentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\BusyIndicator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\GrungeButton.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -212,7 +212,13 @@
     <Resource Include="Images\delete.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="TODO Exercise 2 Task 1a.txt" />
+    <ProjectReference Include="..\Grades.Utilities\Grades.Utilities.csproj">
+      <Project>{80d97d17-a0df-4b62-930a-bf9b39140433}</Project>
+      <Name>Grades.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\SchoolOfFineArts.png" />
   </ItemGroup>
   <ItemGroup>
     <ServiceReferenceMetadataStorage Include="Service References\GradesService.DataModel\">
@@ -224,9 +230,6 @@
       <Generator>DataServicesClientSingleFileGeneratorCore</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\SchoolOfFineArts.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

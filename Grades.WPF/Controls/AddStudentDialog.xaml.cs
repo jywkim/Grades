@@ -22,12 +22,17 @@ namespace Grades.WPF
         #endregion
 
         #region Refresh
-        public void Refresh()
+        public async void Refresh()
         {
             ServiceUtils utils = new ServiceUtils();
 
-            var students = utils.GetUnassignedStudents();
-                               
+            await utils.GetUnassignedStudents(OnGetUnassignedStudentsComplete);
+        }
+        #endregion
+
+        #region Callbacks
+        private void OnGetUnassignedStudentsComplete(IEnumerable<Student> students)
+        {   
             List<LocalStudent> resultData = new List<LocalStudent>();
 
             foreach (Student s in students)
@@ -40,24 +45,27 @@ namespace Grades.WPF
                 resultData.Add(student);
             }
 
-            list.ItemsSource = null;
-            list.ItemsSource = resultData;
+            this.Dispatcher.Invoke(() =>
+            {
+                list.ItemsSource = null;
+                list.ItemsSource = resultData;
 
-            if (resultData.Count == 0)
-            {
-                txtMessage.Visibility = Visibility.Visible;
-                listContainer.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                txtMessage.Visibility = Visibility.Collapsed;
-                listContainer.Visibility = Visibility.Visible;
-            }
+                if (resultData.Count == 0)
+                {
+                    txtMessage.Visibility = Visibility.Visible;
+                    listContainer.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    txtMessage.Visibility = Visibility.Collapsed;
+                    listContainer.Visibility = Visibility.Visible;
+                }
+            });
         }
         #endregion
 
         #region Events
-        private void Student_Click(object sender, MouseButtonEventArgs e)
+        private async void Student_Click(object sender, MouseButtonEventArgs e)
         {
             LocalStudent student = (sender as StudentPhoto).DataContext as LocalStudent;
 
@@ -65,7 +73,7 @@ namespace Grades.WPF
             if (button == MessageBoxResult.Yes)
             {
                 ServiceUtils utils = new ServiceUtils();
-                utils.AddStudent(SessionContext.CurrentTeacher, student.Record);
+                await utils.AddStudent(SessionContext.CurrentTeacher, student.Record);
                 Refresh();
             }
         }

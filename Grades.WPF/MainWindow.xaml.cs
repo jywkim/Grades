@@ -5,6 +5,7 @@ using Grades.WPF.Services;
 using System.Windows.Threading;
 using System.Data.Services.Client;
 using System.Threading.Tasks;
+using Grades.WPF.GradesService.DataModel;
 
 namespace Grades.WPF
 {
@@ -21,16 +22,14 @@ namespace Grades.WPF
         #endregion
 
         #region Events
-
-        // TODO: Exercise 2: Task 2a: Implement the StartBusy event handler
         private void StartBusy(object sender, EventArgs e)
         {
             busyIndicator.Visibility = Visibility.Visible;
         }
-        // TODO: Exercise 2: Task 2b: Implement the EndBusy event handler
+
         private void EndBusy(object sender, EventArgs e)
         {
-            busyIndicator.Visibility = Visibility.Hidden;
+            busyIndicator.Visibility = Visibility.Collapsed;
         }
 
         private void logonPage_LogonSuccess(object sender, EventArgs e)
@@ -119,7 +118,7 @@ namespace Grades.WPF
                 {
                     case "Student":
                         // Get the details of the current user (which must be a student)
-                        var student = utils.GetStudent(SessionContext.UserName);
+                        var student = await utils.GetStudent(SessionContext.UserName);
 
                         // Display the name of the student
                         try
@@ -141,7 +140,7 @@ namespace Grades.WPF
 
                     case "Parent":
                         // Get the details of the current user (which must be a parent)
-                        var parent = utils.GetParent(SessionContext.UserName);
+                        var parent = await utils.GetParent(SessionContext.UserName);
 
                         // Display the name of the parent
                         try
@@ -156,26 +155,7 @@ namespace Grades.WPF
                         } 
 
                         // Find all the students that are children of this parent
-                        var students = utils.GetStudentsByParent(SessionContext.UserName);
-
-                        // Display the details for the first child
-                        try
-                        {
-                            foreach (var s in students)
-                            {
-                                LocalStudent child = new LocalStudent();
-                                child.Record = s;
-
-                                SessionContext.CurrentStudent = child;
-                                GotoStudentProfile();
-                                break;
-                            }
-                        }
-                        catch (DataServiceQueryException ex)
-                        {
-                            MessageBox.Show(String.Format("Error: {0} - {1}",
-                                ex.Response.StatusCode.ToString(), ex.Response.Error.Message));
-                        }  
+                        await utils.GetStudentsByParent(SessionContext.UserName, OnGetStudentsByParentComplete);                        
                         break;
 
                     case "Teacher":
@@ -203,6 +183,31 @@ namespace Grades.WPF
             {
                 MessageBox.Show(e.Message, "Error fetching details", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+        #endregion
+
+        #region Callbacks
+         // Display the students for a parent
+        private void OnGetStudentsByParentComplete(IEnumerable<Student> students)
+        {
+            // Display the details for the first child
+            try
+            {
+                foreach (var s in students)
+                {
+                    LocalStudent child = new LocalStudent();
+                    child.Record = s;
+
+                    SessionContext.CurrentStudent = child;
+                    this.Dispatcher.Invoke(() => { GotoStudentProfile(); });
+                    break;
+                }
+            }
+            catch (DataServiceQueryException ex)
+            {
+                MessageBox.Show(String.Format("Error: {0} - {1}",
+                    ex.Response.StatusCode.ToString(), ex.Response.Error.Message));
+            }  
         }
         #endregion
     }

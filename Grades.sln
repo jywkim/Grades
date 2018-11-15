@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grades.DataModel", "Grades.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grades.Web", "Grades.Web\Grades.Web.csproj", "{DD71F076-1078-4415-8DB7-B4375F42248F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grades.Utilities", "Grades.Utilities\Grades.Utilities.csproj", "{80D97D17-A0DF-4B62-930A-BF9B39140433}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grades.WPF", "Grades.WPF\Grades.WPF.csproj", "{7DBE08F6-2CE9-4CEE-B7C8-F52109E0363B}"
 EndProject
 Global
@@ -37,6 +39,16 @@ Global
 		{7DBE08F6-2CE9-4CEE-B7C8-F52109E0363B}.Release|Mixed Platforms.Build.0 = Release|x86
 		{7DBE08F6-2CE9-4CEE-B7C8-F52109E0363B}.Release|x86.ActiveCfg = Release|x86
 		{7DBE08F6-2CE9-4CEE-B7C8-F52109E0363B}.Release|x86.Build.0 = Release|x86
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{80D97D17-A0DF-4B62-930A-BF9B39140433}.Release|x86.ActiveCfg = Release|Any CPU
 		{DD71F076-1078-4415-8DB7-B4375F42248F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DD71F076-1078-4415-8DB7-B4375F42248F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD71F076-1078-4415-8DB7-B4375F42248F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

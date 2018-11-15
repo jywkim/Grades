@@ -61,7 +61,7 @@ namespace Grades.WPF.Services
             await Task.Run(() => callback(students));
         }
 
-        public void AddStudent(Teacher teacher, Student student)
+        public async Task AddStudent(Teacher teacher, Student student)
         {
             if (!IsConnected())
                 return;
@@ -71,11 +71,13 @@ namespace Grades.WPF.Services
 
             student.Teacher = teacher;
             student.TeacherUserId = teacher.UserId;
-            DBContext.UpdateObject(student);
-            Save();
+            await Task.Run(() => { 
+                DBContext.UpdateObject(student); 
+                Save(); 
+            });
         }
 
-        public void RemoveStudent(Teacher teacher, Student student)
+        public async Task RemoveStudent(Teacher teacher, Student student)
         {
             if (!IsConnected())
                 return;
@@ -85,115 +87,124 @@ namespace Grades.WPF.Services
 
             student.Teacher = null;
             student.TeacherUserId = null;
-            DBContext.UpdateObject(student);
-            Save();
+            await Task.Run(() =>
+            {
+                DBContext.UpdateObject(student);
+                Save();
+            });
         }
 
         #endregion
 
         #region Parent
-        public Parent GetParent(string userName)
+        public async Task<Parent> GetParent(string userName)
         {
             if (!IsConnected())
                 return null;
 
-            var parent = (from p in DBContext.Parents
-                          where p.User.UserName == userName
-                          select p).FirstOrDefault();
+            var parent = await Task.Run(() =>
+                                    (from p in DBContext.Parents
+                                     where p.User.UserName == userName
+                                     select p).FirstOrDefault());
 
             return parent;
         }
 
-        public IEnumerable<Student> GetStudentsByParent(string parentName)
+        public async Task GetStudentsByParent(string parentName, Action<IEnumerable<Student>> callback)
         {
             if (!IsConnected())
-                return null;
+                return;
 
             Uri url = new Uri(String.Format("http://localhost:1103/Services/GradesWebDataService.svc/StudentsForParent?parentName='{0}'", parentName), UriKind.RelativeOrAbsolute);
-            var students = DBContext.Execute<Student>(url);
+            var students = await Task.Run(() => DBContext.Execute<Student>(url));
 
-            return students;
+            // Invoke the callback that displays the result asynchronously
+            await Task.Run(() => callback(students));
         }
         #endregion
 
         #region Student
-        public List<Student> GetUnassignedStudents()
+        public async Task GetUnassignedStudents(Action<IEnumerable<Student>> callback)
         {
             if (!IsConnected())
-                return null;
+                return;
 
-            var students = (from s in DBContext.Students
-                            where s.TeacherUserId == null
-                            select s).OrderBy(s => s.LastName).ToList();
+            var students = await Task.Run(() => 
+                                    (from s in DBContext.Students
+                                     where s.TeacherUserId == null
+                                     select s).OrderBy(s => s.LastName).ToList());
 
-            return students;
+            await Task.Run(() => callback(students));
         }            
 
-        public Student GetStudent(string userName)
+        public async Task<Student> GetStudent(string userName)
         {
             if (!IsConnected())
                 return null;
 
-            var student = (from s in DBContext.Students
-                           where s.User.UserName == userName
-                           select s).FirstOrDefault();
+            var student = await Task.Run(() =>
+                                    (from s in DBContext.Students
+                                     where s.User.UserName == userName
+                                     select s).FirstOrDefault());
 
             return student;
         }
 
-        public Student GetStudent(string firstname, string lastname)
+        public async Task<Student> GetStudent(string firstname, string lastname)
         {
             if (!IsConnected())
                 return null;
 
-            var student = (from s in DBContext.Students
-                           where s.FirstName == firstname && s.LastName == lastname
-                           select s).FirstOrDefault();
+            var student = await Task.Run(() =>
+                                    (from s in DBContext.Students
+                                     where s.FirstName == firstname && s.LastName == lastname
+                                     select s).FirstOrDefault());
 
             return student;
         }
 
-        public string GetClassNameByStudent(Guid studentID)
+        public async Task<string> GetClassNameByStudent(Guid studentID)
         {
             if (!IsConnected())
                 return null;
 
-            var classname = (from s in DBContext.Students
-                             where s.User.UserId == studentID
-                             select s.Teacher.Class).FirstOrDefault();
+            var classname = await Task.Run(() =>
+                                        (from s in DBContext.Students
+                                         where s.User.UserId == studentID
+                                         select s.Teacher.Class).FirstOrDefault());
 
             return classname;
         }
 
-        public List<Grade> GetGradesByStudent(Guid studentID)
+        public async Task<List<Grade>> GetGradesByStudent(Guid studentID)
         {
             if (!IsConnected())
                 return null;
 
-            var grades = (from g in DBContext.Grades
-                          where g.StudentUserId == studentID
-                          select g).ToList();
+            var grades = await Task.Run(() =>
+                                    (from g in DBContext.Grades
+                                     where g.StudentUserId == studentID
+                                     select g).ToList());
 
             return grades;
         }
         #endregion
 
         #region Grades
-        private List<Subject> GetSubjects()
+        private async void GetSubjects()
         {
             if (!IsConnected())
-                return null;
+                return;
 
             // Find all the subjects in the dataservice for the current student and add them to the Subjects collection
-            var subs = (from s in DBContext.Subjects
-                        select s).OrderBy(s => s.Name).ToList();
+            var subs = await Task.Run(() =>
+                                    (from s in DBContext.Subjects
+                                     select s).OrderBy(s => s.Name).ToList());
 
             Subjects = new List<Subject>();
 
             foreach (Subject s in subs)
                 Subjects.Add(s);
-
-            return Subjects;
         }
 
         public static Subject GetSubject(int id)
@@ -204,19 +215,25 @@ namespace Grades.WPF.Services
             return Subjects.First(s => s.Id == id);
         }
 
-        public void AddGrade(Grade grade)
+        public async Task AddGrade(Grade grade)
         {
-            DBContext.AddToGrades(grade);
-            Save();
+            await Task.Run(() => 
+            {
+                DBContext.AddToGrades(grade);
+                Save();
+            });
         }
 
-        public void UpdateGrade(Grade grade)
+        public async Task UpdateGrade(Grade grade)
         {
             if (!IsConnected())
                 return;
 
-            DBContext.UpdateObject(grade);
-            Save();
+            await Task.Run(() =>
+            {
+                DBContext.UpdateObject(grade);
+                Save();
+            });
         }
         #endregion
 

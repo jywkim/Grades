@@ -27,10 +27,10 @@ namespace Grades.WPF
         #endregion
 
         #region Events
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        private async void OKButton_Click(object sender, RoutedEventArgs e)
         {
             ServiceUtils utils = new ServiceUtils();
-            utils.AddGrade(_grade.Record);
+            await utils.AddGrade(_grade.Record);
             this.DialogResult = true;
         }
 

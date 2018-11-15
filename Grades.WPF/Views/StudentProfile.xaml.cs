@@ -11,7 +11,9 @@ using Microsoft.Win32;
 using System.IO;
 using System.Xml;
 using System.Text;
+using System.Threading.Tasks;
 using Grades.WPF.GradesService.DataModel;
+using Grades.Utilities;
 
 namespace Grades.WPF
 {
@@ -24,6 +26,9 @@ namespace Grades.WPF
 
         #region Event Members
         public event EventHandler Back;
+
+        public event EventHandler StartBusy;
+        public event EventHandler EndBusy;
         #endregion
 
         #region Constructor
@@ -59,40 +64,68 @@ namespace Grades.WPF
             flipControl.ToFront();
         }
 
-        public void Refresh(string studentid)
+        public async void Refresh(string studentid)
         {
             InitRefresh();
 
-            // Get the details of the student
-            var student = _context.GetStudent(studentid);
-
-            // Update the display with the details and grades of the student
-            DisplayStudentDetailsAndGrades(student);
-
-            // If the current user is a parent, fetch the names of any other children and display them
-            if (SessionContext.CurrentParent != null)
+            try
             {
-                var students = _context.GetStudentsByParent(SessionContext.UserName);
-                DisplayStudentsForParent(students);
+                StartBusyEvent();
+
+                // Get the details of the student
+                var student = await _context.GetStudent(studentid);
+
+                // Update the display with the details and grades of the student
+                await DisplayStudentDetailsAndGrades(student);
+
+                // If the current user is a parent, fetch the names of any other children and display them
+                if (SessionContext.CurrentParent != null)
+                {
+                    await _context.GetStudentsByParent(SessionContext.UserName, OnGetStudentsByParentComplete);
+                }
+            }
+            finally
+            {
+                EndBusyEvent();
             }
         }
 
-        public void Refresh(string firstname, string lastname)
+        public async void Refresh(string firstname, string lastname)
         {
             InitRefresh();
 
-            var student = _context.GetStudent(firstname, lastname);
-            DisplayStudentDetailsAndGrades(student);
-
-            if (SessionContext.CurrentParent != null)
+            try
             {
-                var students = _context.GetStudentsByParent(SessionContext.UserName);
-                DisplayStudentsForParent(students);
+                StartBusyEvent();
+
+                var student = await _context.GetStudent(firstname, lastname);
+                await DisplayStudentDetailsAndGrades(student);
+
+                if (SessionContext.CurrentParent != null)
+                {
+                    await _context.GetStudentsByParent(SessionContext.UserName, OnGetStudentsByParentComplete);
+                }
+            }
+            finally
+            {
+                EndBusyEvent();
             }
         }
         #endregion
 
         #region Events
+        private void StartBusyEvent()
+        {
+            if (StartBusy != null)
+                StartBusy(this, new EventArgs());
+        }
+
+        private void EndBusyEvent()
+        {
+            if (EndBusy != null)
+                EndBusy(this, new EventArgs());
+        }
+
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             if (SessionContext.Role != "Teacher")
@@ -109,7 +142,7 @@ namespace Grades.WPF
             SessionContext.CurrentStudent = child;
         }
 
-        private void Update_Click(object sender, RoutedEventArgs e)
+        private async void Update_Click(object sender, RoutedEventArgs e)
         {
             LocalGrade grade = (sender as GrungeButton).Tag as LocalGrade;
 
@@ -117,7 +150,7 @@ namespace Grades.WPF
             DateTime dt = (parentGrid.Children[0] as DatePicker).SelectedDate.Value;
 
             ServiceUtils utils = new ServiceUtils();
-            utils.UpdateGrade(grade.Record);
+            await utils.UpdateGrade(grade.Record);
         }
 
         private void Flip_Click(object sender, MouseButtonEventArgs e)
@@ -208,13 +241,13 @@ namespace Grades.WPF
         {
             try
             {
-                // Use a SaveFileDiaolog to prompt the user for a filename to save the report as (must be an XML file)
+                // Use a SaveFileDiaolog to prompt the user for a filename to save the report as (must be a Word document)
                 SaveFileDialog dialog = new SaveFileDialog();
-                dialog.Filter = "XML documents|*.xml";
+                dialog.Filter = "Word documents|*.docx";
 
                 // Set the default filename to Grades.txt
                 dialog.FileName = "Grades";
-                dialog.DefaultExt = ".xml";
+                dialog.DefaultExt = ".docx";
 
                 // Display the dialog and get a filename from the user
                 Nullable<bool> result = dialog.ShowDialog();
@@ -222,23 +255,14 @@ namespace Grades.WPF
                 // If the user selected a file, then generate the report
                 if (result.HasValue && result.Value)
                 {
-                    // Get the grades for the currently selected student
-                    List<LocalGrade> grades = studentDetails.DataContext as List<LocalGrade>;
-
-                    // Serialize the grades to a MemoryStream. 
-                    // The format is determined by the extension of the file specified by the user.
-                    MemoryStream ms = FormatAsXMLStream(grades);
-
-                    // Preview the report data in a MessageBox and ask the user whether they wish to save the report.
-                    string formattedReportData = FormatXMLData(ms);
-                    MessageBoxResult reply = MessageBox.Show(formattedReportData, "Save Report?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (reply == MessageBoxResult.Yes)
+                    try
                     {
-                        // If the user says yes, then save the data to the file that the user specified earlier
-                        // If the file already exists it will be overwritten (the SaveFileDialog box will already have asked the user whether this is OK)
-                        FileStream file = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
-                        ms.CopyTo(file);
-                        file.Close();
+                        // TODO: Exercise 1: Task 2b: Generate the report by using a separate task
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error generating report", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -248,10 +272,10 @@ namespace Grades.WPF
             }
         }
 
-        private void dialog_Closed(object sender, EventArgs e)
+        private async void dialog_Closed(object sender, EventArgs e)
         {
             // Find the new set of grades for the currently displayed student (including any new and updated grades resulting from the dialog)
-            var grades = _context.GetGradesByStudent((studentPhoto.DataContext as LocalStudent).Record.UserId);
+            var grades = await _context.GetGradesByStudent((studentPhoto.DataContext as LocalStudent).Record.UserId);
 
             // Display the new set of grades
             DisplayGrades(grades);
@@ -319,10 +343,35 @@ namespace Grades.WPF
         }
         #endregion
 
+        #region Callbacks
+        // Display the names of the students for a parent
+        private void OnGetStudentsByParentComplete(IEnumerable<Student> students)
+        {
+            try
+            {
+                // Convert the list of students from the format provided by the dataservice to the format displayed by the application
+                List<LocalStudent> studentList = new List<LocalStudent>();
+                foreach (Student s in students)
+                {
+                    LocalStudent child = new LocalStudent() { Record = s };
+                    studentList.Add(child);
+                }
+
+                // Use databinding to display the student names
+                this.Dispatcher.Invoke(() => { listChild.ItemsSource = studentList; });
+            }
+            catch (DataServiceQueryException ex)
+            {
+                MessageBox.Show(String.Format("Error: {0} - {1}",
+                    ex.Response.StatusCode.ToString(), ex.Response.Error.Message));
+            }
+        }
+        #endregion
+
         #region Utility and Helper Methods
 
         // Update the display with the details of the specified student and retrieve the grades for this student
-        private void DisplayStudentDetailsAndGrades(Student student)
+        private async Task DisplayStudentDetailsAndGrades(Student student)
         {
             try
             {
@@ -335,7 +384,7 @@ namespace Grades.WPF
                 studentPhoto.DataContext = child;
 
                 // Find the grades for the student and display them
-                var grades = _context.GetGradesByStudent(student.UserId);
+                var grades = await _context.GetGradesByStudent(student.UserId);
                 DisplayGrades(grades);
             }
             catch (DataServiceQueryException ex)
@@ -368,29 +417,6 @@ namespace Grades.WPF
                 // Display the grades
                 SessionContext.CurrentGrades = grades;
                 ResetGrades();
-            }
-            catch (DataServiceQueryException ex)
-            {
-                MessageBox.Show(String.Format("Error: {0} - {1}",
-                    ex.Response.StatusCode.ToString(), ex.Response.Error.Message));
-            }
-        }
-
-        // Display the names of the students for a parent
-        private void DisplayStudentsForParent(IEnumerable<Student> students)
-        {
-            try
-            {
-                // Convert the list of students from the format provided by the dataservice to the format displayed by the application
-                List<LocalStudent> studentList = new List<LocalStudent>();
-                foreach (Student s in students)
-                {
-                    LocalStudent child = new LocalStudent() { Record = s };
-                    studentList.Add(child);
-                }
-
-                // USe databinding to display the student names
-                listChild.ItemsSource = studentList;
             }
             catch (DataServiceQueryException ex)
             {
@@ -482,6 +508,37 @@ namespace Grades.WPF
 
             // Return the string containing the formatted data
             return builder.ToString();
+        }
+
+        // TODO: Exercise 1: Task 2a: Generate a student grade report as a Word document.
+        public void GenerateStudentReport(LocalStudent studentData, string reportPath)
+        {
+            WordWrapper wrapper = new WordWrapper();
+
+            // Create a new Word document in memory
+            wrapper.CreateBlankDocument();
+
+            // Add a heading to the document
+            wrapper.AppendHeading(String.Format("Grade Report: {0} {1}", studentData.FirstName, studentData.LastName));
+            wrapper.InsertCarriageReturn();
+            wrapper.InsertCarriageReturn();
+
+            // Output the details of each grade for the student
+            foreach (var grade in SessionContext.CurrentGrades)
+            {
+                wrapper.AppendText(grade.SubjectName, true, true);
+                wrapper.InsertCarriageReturn();
+                wrapper.AppendText("Assessment: " + grade.Assessment, false, false);
+                wrapper.InsertCarriageReturn();
+                wrapper.AppendText("Date: " + grade.AssessmentDateString, false, false);
+                wrapper.InsertCarriageReturn();
+                wrapper.AppendText("Comment: " + grade.Comments, false, false);
+                wrapper.InsertCarriageReturn();
+                wrapper.InsertCarriageReturn();
+            }
+
+            // Save the Word document
+            wrapper.SaveAs(reportPath);
         }
         #endregion
     }
