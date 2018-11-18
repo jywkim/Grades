@@ -4,16 +4,16 @@ using Microsoft.Office.Interop.Word;
 
 namespace Grades.Utilities
 {
+    // TODO: Exercise 2: Task 2a: Specify that the WordWrapper class implements the IDisposable interface
     public class WordWrapper
     {
-        // TODO: Exercise 1: Task 1a: Create a dynamic variable called _word for activating Word
         dynamic _word = null;
+
         /// <summary>
         /// Creates an instance of the WordWrapper class.
         /// </summary>
         public WordWrapper()
         {
-            // TODO: Exercise 1: Task 1b: Instantiate _word as a new Word Application object
             this._word = new Application { Visible = false };
         }
 
@@ -22,7 +22,6 @@ namespace Grades.Utilities
         /// </summary>
         public void CreateBlankDocument()
         {
-            // TODO: Exercise 1: Task 1c: Create a new Word document
             var doc = this._word.Documents.Add();
             doc.Activate();
         }
@@ -79,17 +78,21 @@ namespace Grades.Utilities
         /// <param name="filePath">The absolute file path.</param>
         public void SaveAs(string filePath)
         {
-            // TODO: Exercise 1: Task 1d: Save the document using the specified filename.
             var currentDocument = this._word.ActiveDocument;
+
             currentDocument.SaveAs(filePath);
-            // TODO: Exercise 1: Task 1e: Close the document
             currentDocument.Close();
         }
 
         private Range GetEndOfDocument()
         {
-            // Find the end of the document
             return this._word.ActiveDocument.Range(this._word.ActiveDocument.Content.End - 1);
         }
+
+        // TODO: Exercise 2: Task 2d: Create a finalizer that calls the Dispose method
+
+        // TODO: Exercise 2: Task 2b: Create the protected Dispose(bool) method
+
+        // TODO: Exercise 2: Task 2c: Create the public Dispose method
     }
 }
