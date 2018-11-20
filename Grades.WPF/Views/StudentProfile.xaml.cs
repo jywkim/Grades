@@ -513,7 +513,7 @@ namespace Grades.WPF
         // Generate a student grade report as a Word document.
         public void GenerateStudentReport(LocalStudent studentData, string reportPath)
         {
-            // TODO: Exercise 2: Task 3: Ensure that the WordWrapper is disposed when the method finishes
+            // Ensure that the WordWrapper is disposed when the method finishes
             using (var wrapper = new WordWrapper())
             {
                 // Create a new Word document in memory

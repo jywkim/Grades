@@ -7,6 +7,7 @@ using System.Collections;
 using System.Windows.Controls;
 using System.Text.RegularExpressions;
 using Grades.WPF.GradesService.DataModel;
+using Grades.Utilities;
 
 namespace Grades.WPF
 {
@@ -40,6 +41,7 @@ namespace Grades.WPF
         }
     }
 
+    // TODO: Exercise 1: Task 2: Add the IncludeInReport attribute to the approriate properties in the LocalGrade class
     public class LocalGrade : IDataErrorInfo
     {
         #region Properties
