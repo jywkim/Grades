@@ -527,14 +527,10 @@ namespace Grades.WPF
                 // Output the details of each grade for the student
                 foreach (var grade in SessionContext.CurrentGrades)
                 {
-                    wrapper.AppendText(grade.SubjectName, true, true);
-                    wrapper.InsertCarriageReturn();
-                    wrapper.AppendText("Assessment: " + grade.Assessment, false, false);
-                    wrapper.InsertCarriageReturn();
-                    wrapper.AppendText("Date: " + grade.AssessmentDateString, false, false);
-                    wrapper.InsertCarriageReturn();
-                    wrapper.AppendText("Comment: " + grade.Comments, false, false);
-                    wrapper.InsertCarriageReturn();
+                    // TODO: Exercise 2: Task 2a: Use the IncludeProcessor to determine which fields in the Grade object are tagged
+
+                    // TODO: Exercise 2: Task 2b: Output each tagged item, using the format specified by the properties of the IncludeInReport attribute for each item
+
                     wrapper.InsertCarriageReturn();
                 }
 

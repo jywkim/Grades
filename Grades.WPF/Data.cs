@@ -41,19 +41,20 @@ namespace Grades.WPF
         }
     }
 
-    // TODO: Exercise 1: Task 2: Add the IncludeInReport attribute to the approriate properties in the LocalGrade class
     public class LocalGrade : IDataErrorInfo
     {
         #region Properties
         public Grade Record { get; set; }
 
         #region Readonly Properties
-        [IncludeInReport(Label = "Subject Name", Bold = true, Underline = true)]
+
+        [IncludeInReport(Label="Subject Name", Bold=true, Underline=true)]
         public string SubjectName
         {
             get { return (Record.Subject != null) ? Record.Subject.Name : ""; }
         }
-        [IncludeInReport(Label = "Date")]
+
+        [IncludeInReport (Label="Date")]
         public string AssessmentDateString
         {
             get { return Record.AssessmentDate.ToShortDateString(); }
@@ -86,12 +87,14 @@ namespace Grades.WPF
                 Record.SubjectId = value.Id;
             }
         }
+
         [IncludeInReport(Label = "Grade")]
         public string Assessment
         {
             get { return Record.Assessment; }
             set { Record.Assessment = value; }
         }
+
         [IncludeInReport(Label = "Comments")]
         public string Comments
         {
